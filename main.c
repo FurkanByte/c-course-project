@@ -27,7 +27,6 @@ typedef struct course{
 int menu();
 course *insertNewNode(course*, course*);
 course *insertFromFile(course *);
-course *deleteCourse(course *, int);
 void searchCourse(course *, int);
 void listLetterGrades(course *);
 void listCourses(course *);
@@ -68,27 +67,23 @@ int main() {
             printf("Your course has been added\n");
         }
         else if (choice == 2) {
-            int courseCodeToDelete;
-            printf("Enter course code to delete: ");
-            scanf("%d", &courseCodeToDelete);
-
-            root = deleteCourse(root, courseCodeToDelete);
-        }
-        else if (choice == 3) {
             root = insertFromFile(root);
         }
-        else if (choice == 4) {
+        else if (choice == 3) {
             int courseCodeToSearch;
             printf("Enter course code to search: ");
             scanf("%d", &courseCodeToSearch);
 
             searchCourse(root, courseCodeToSearch);
         }
-        else if (choice == 5) {
+        else if (choice == 4) {
             listLetterGrades(root);
         }
-        else if (choice == 6) {
+        else if (choice == 5) {
             listCourses(root);
+        }
+        else if (choice == 0) {
+            break;
         }
     }
 }
@@ -100,11 +95,10 @@ int menu() {
            "  Course Tree System\n"
            "----------------------------\n"
            "1. Add new course.\n"
-           "2. Delete a course.\n"
-           "3. Add new course from a file.\n"
-           "4. Search a course.\n"
-           "5. List letter grades.\n"
-           "6. List all courses (descending order).\n"
+           "2. Add new course from a file.\n"
+           "3. Search a course.\n"
+           "4. List letter grades.\n"
+           "5. List all courses (descending order).\n"
            "0. Exit\n"
            "----------------------------\n\n"
            "Enter your choice : ");
