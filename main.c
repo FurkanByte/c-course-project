@@ -5,6 +5,7 @@
 //
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct course{
     char lecturerName[50];
@@ -25,9 +26,9 @@ typedef struct course{
 
 int menu();
 course *insertNewNode(course*, course*);
-void insertFromFile(course *);
-void deleteCourse(course *, int);
-void searchCourse(course *);
+course *insertFromFile(course *);
+course *deleteCourse(course *, int);
+void searchCourse(course *, int);
 void listLetterGrades(course *);
 void listCourses(course *);
 void calculateCGPA(course *);
@@ -71,10 +72,20 @@ int main() {
             printf("Enter course code to delete: ");
             scanf("%d", &courseCodeToDelete);
 
-            deleteCourse(root, courseCodeToDelete);
+            root = deleteCourse(root, courseCodeToDelete);
         }
         else if (choice == 3) {
-            insertFromFile(root);
+            root = insertFromFile(root);
+        }
+        else if (choice == 4) {
+            int courseCodeToSearch;
+            printf("Enter course code to search: ");
+            scanf("%d", &courseCodeToSearch);
+
+            searchCourse(root, courseCodeToSearch);
+        }
+        else if (choice == 5) {
+            listLetterGrades(root);
         }
         else if (choice == 6) {
             listCourses(root);
@@ -114,62 +125,112 @@ course *insertNewNode(course *p, course *temp) {
     }
 }
 
+course *insertFromFile(course *root) {
+    FILE *file;
+    char line[100];
+    course *temp;
+
+    file = fopen("course_data.txt", "r");
+    if (file == NULL) {
+        printf("File cannot open.\n");
+        return root;
+    }
+
+    while (fgets(line, sizeof(line), file)) {
+        temp = (course *)malloc(sizeof(course));
+
+        if (sscanf(line, "%49[^,],%49[^,],%49[^,],%d,%d,%d,%f,%f,%f,%f",
+            temp->lecturerName, temp->lecturerSurname, temp->courseName,
+            &temp->courseCode, &temp->academicSemester, &temp->attendance,
+            &temp->midtermScore, &temp->finalScore, &temp->labScore, &temp->quizScore) == 10) {
+
+            temp->courseGrade = (temp->midtermScore * 0.25) +
+                                (temp->finalScore * 0.45) +
+                                (temp->labScore * 0.2) +
+                                (temp->quizScore * 0.15);
+
+            temp->left = temp->right = NULL;
+
+            root = insertNewNode(root, temp);
+
+            } else {
+                printf("Invalid format for course: %s\n", line);
+                free(temp);
+            }
+    }
+
+    fclose(file);
+    printf("Your courses has been added\n");
+    return root;
+}
+
 //This function list all courses in descending order.
 void listCourses(course *root) {
     //if node is not NULL printing course information.
     if(root != NULL) {
         listCourses(root->right);
-        printf("**********************************\n");
-        printf("%s\n", root->courseName);
-        printf("%d\n", root->courseCode);
-        printf("%s\n", root->lecturerName);
-        printf("%f\n", root->courseGrade);
-        printf("**********************************\n");
+        printf("**********************************\n"
+               "Course Name: %s\n"
+               "Course Code: %d\n"
+               "Lecturer Name: %s\n"
+               "Lecturer Surname: %s\n"
+               "Academic Semester: %d\n"
+               "Attendance: %d\n"
+               "Midterm Score: %f\n"
+               "Final Score: %f\n"
+               "Lab Score: %f\n"
+               "Quiz Score: %f\n"
+               "Course Grade: %f\n"
+               "**********************************\n" ,root->courseName, root->courseCode, root->lecturerName, root->lecturerSurname, root->academicSemester, root->attendance, root->midtermScore, root->finalScore, root->labScore, root->quizScore, root->courseGrade);
+        if(root->left != NULL) printf("\tleft->courseCode: %d", root->left->courseCode);
+        if(root->right != NULL) printf("\tright->courseCode: %d", root->right->courseCode);
         listCourses(root->left);
     }
 }
 
-void insertFromFile(course *root) {
-    printf("Inserting from file...");
-    FILE *file = fopen("course_data.txt", "r");
-    if (file == NULL) {
-        printf("File cannot open. Please check the file.\n");
-        return;
-    }
-
-    course *head = NULL, *current = NULL;
-
-    while (!feof(file)) {
-        course *temp = (course *)malloc(sizeof(course));
-        if (!temp) {
-            printf("Error.\n");
-            break;
-        }
-
-        if (fscanf(file, "%s %s %s %d %d %d %f %f %f %f",
-                   temp->lecturerName, temp->lecturerSurname, temp->courseName,
-                   &temp->courseCode, &temp->academicSemester, &temp->attendance,
-                   &temp->midtermScore, &temp->finalScore, &temp->labScore,
-                   &temp->quizScore) != 10) {
-            free(temp);
-            break;
-                   }
-
-        char separator[10];
-        fscanf(file, "%s", separator);
-
-        insertNewNode(root, temp);
-        current = temp;
-    }
-    printf("Your courses has been added\n");
-}
-
-void deleteCourse(course *root, int courseCode) {
+void listLetterGrades(course *root) {
     if(root != NULL) {
-        listCourses(root->right);
+        listLetterGrades(root->right);
+        printf("**********************************\n"
+               "Course Name: %s\n"
+               "Course Code: %d\n"
+               "Course Grade: %f\n", root->courseName, root->courseCode, root->courseGrade);
+        if(root->courseGrade > 85) printf("Letter grade: A\n");
+        else if(root->courseGrade > 80) printf("Letter grade: A-\n");
+        else if(root->courseGrade > 75) printf("Letter grade: B+\n");
+        else if(root->courseGrade > 70) printf("Letter grade: B\n");
+        else if(root->courseGrade > 67) printf("Letter grade: B-\n");
+        else if(root->courseGrade > 63) printf("Letter grade: C+\n");
+        else if(root->courseGrade > 60) printf("Letter grade: C\n");
+        else if(root->courseGrade > 57) printf("Letter grade: C-\n");
+        else if(root->courseGrade > 55) printf("Letter grade: D+\n");
+        else if(root->courseGrade > 50) printf("Letter grade: D\n");
+        else if(root->courseGrade > 45) printf("Letter grade: D-\n");
+        else printf("Letter grade: F\n");
+        printf("*********************************\n");
+        listLetterGrades(root->left);
+    }
+}
+
+void searchCourse(course *root, int courseCode) {
+    if(root != NULL) {
+        searchCourse(root->right, courseCode);
         if (root->courseCode == courseCode) {
-            
+            printf("**********************************\n"
+               "Course Name: %s\n"
+               "Course Code: %d\n"
+               "Lecturer Name: %s\n"
+               "Lecturer Surname: %s\n"
+               "Academic Semester: %d\n"
+               "Attendance: %d\n"
+               "Midterm Score: %f\n"
+               "Final Score: %f\n"
+               "Lab Score: %f\n"
+               "Quiz Score: %f\n"
+               "Course Grade: %f\n"
+               "**********************************\n" ,root->courseName, root->courseCode, root->lecturerName, root->lecturerSurname, root->academicSemester, root->attendance, root->midtermScore, root->finalScore, root->labScore, root->quizScore, root->courseGrade);
+            return;
         }
-        listCourses(root->left);
+        searchCourse(root->left, courseCode);
     }
 }

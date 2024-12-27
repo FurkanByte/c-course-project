@@ -1,23 +1,6 @@
-Cope
-Atmayin
-Programming 101
-101
-1
-75
-88.5
-92.3
-85.0
-90.2
----
-Cengiz
-Aytmatov
-Data Structures
-67890
-2023
-80
-85.0
-87.0
-83.5
-88.0
----
-
+Martin,Eden,Programming,101,1,75,88.5,92.3,85.0,90.2
+Cengiz,Aytmatov,Data,201,2,80,85.0,87.0,83.5,88.0
+Jules,Verne,Mathematics,102,1,90,85.0,92.0,88.5,91.0
+Ferhan,Sensoy,Physics,103,3,85,80.5,75.0,82.0,84.5
+Oguz,Atay,Chemistry,104,2,78,82.0,88.5,79.0,86.0
+Nazim,Hikmet,History,202,1,88,91.5,89.0,92.0,90.5
