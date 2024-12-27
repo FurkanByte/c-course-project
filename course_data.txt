@@ -1,0 +1,23 @@
+Cope
+Atmayin
+Programming 101
+101
+1
+75
+88.5
+92.3
+85.0
+90.2
+---
+Cengiz
+Aytmatov
+Data Structures
+67890
+2023
+80
+85.0
+87.0
+83.5
+88.0
+---
+
