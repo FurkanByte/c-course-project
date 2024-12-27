@@ -26,7 +26,7 @@ typedef struct course{
 int menu();
 course *insertNewNode(course*, course*);
 void insertFromFile(course *);
-void deleteCourse(course *);
+void deleteCourse(course *, int);
 void searchCourse(course *);
 void listLetterGrades(course *);
 void listCourses(course *);
@@ -67,6 +67,13 @@ int main() {
             printf("Your course has been added\n");
         }
         else if (choice == 2) {
+            int courseCodeToDelete;
+            printf("Enter course code to delete: ");
+            scanf("%d", &courseCodeToDelete);
+
+            deleteCourse(root, courseCodeToDelete);
+        }
+        else if (choice == 3) {
             insertFromFile(root);
         }
         else if (choice == 6) {
@@ -139,23 +146,30 @@ void insertFromFile(course *root) {
             break;
         }
 
-        // Düğüm bilgilerini oku
         if (fscanf(file, "%s %s %s %d %d %d %f %f %f %f",
                    temp->lecturerName, temp->lecturerSurname, temp->courseName,
                    &temp->courseCode, &temp->academicSemester, &temp->attendance,
                    &temp->midtermScore, &temp->finalScore, &temp->labScore,
                    &temp->quizScore) != 10) {
             free(temp);
-            break; // Eksik veri varsa çık
+            break;
                    }
 
-        // Ayırıcı satırı oku (---)
         char separator[10];
         fscanf(file, "%s", separator);
 
-        // Listeye ekle
         insertNewNode(root, temp);
         current = temp;
     }
+    printf("Your courses has been added\n");
+}
 
+void deleteCourse(course *root, int courseCode) {
+    if(root != NULL) {
+        listCourses(root->right);
+        if (root->courseCode == courseCode) {
+            
+        }
+        listCourses(root->left);
+    }
 }
